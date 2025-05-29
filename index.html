@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Basic Meta Tags -->
+    <base href="/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="description" content="A modern portfolio website built with Flutter">
+    <meta name="author" content="Your Name">
+    <meta name="keywords" content="portfolio, developer, flutter, web development">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Portfolio">
+    <meta property="og:description" content="A modern portfolio website built with Flutter">
+    <meta property="og:image" content="icons/Icon-512.png">
+    <meta property="og:url" content="https://your-portfolio-url.com">
+    
+    <!-- iOS Meta Tags & Icons -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Portfolio">
+    <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <title>Portfolio</title>
+
+    <!-- Styles -->
+    <style>
+        /* ========== CSS Variables ========== */
+        :root {
+            /* Colors */
+            --primary: #2196f3;
+            --primary-light: #64b5f6;
+            --primary-dark: #1976d2;
+            --secondary: #1565c0;
+            --background: #f0f8ff;
+            --surface: #ffffff;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-light: #ffffff;
+            
+            /* Transitions */
+            --transition-fast: 0.2s;
+            --transition-normal: 0.3s;
+            --transition-slow: 0.5s;
+            
+            /* Shadows */
+            --shadow-small: 0 2px 4px rgba(0,0,0,0.1);
+            --shadow-medium: 0 4px 8px rgba(0,0,0,0.1);
+            --shadow-large: 0 8px 16px rgba(0,0,0,0.1);
+            
+            /* Border Radius */
+            --radius-small: 4px;
+            --radius-medium: 8px;
+            --radius-large: 16px;
+            
+            /* Spacing */
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+        }
+
+        /* Dark Theme Variables */
+        [data-theme="dark"] {
+            --background: #121212;
+            --surface: #1e1e1e;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --primary-light: #1e88e5;
+        }
+
+        /* ========== Base Styles ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text-primary);
+            transition: background-color var(--transition-normal),
+                      color var(--transition-normal);
+            overflow-x: hidden;
+        }
+
+        /* ========== Loading Screen ========== */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            background: linear-gradient(135deg, var(--background), var(--surface));
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 9999;
+            transition: opacity var(--transition-normal);
+        }
+
+        .loading-content {
+            text-align: center;
+            transform: translateY(-20px);
+            animation: float 2s ease-in-out infinite;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(33, 150, 243, 0.1);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto var(--spacing-md);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .loading-text {
+            color: var(--text-primary);
+            font-size: 1.125rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            opacity: 0.9;
+        }
+
+        /* ========== Animations ========== */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(-20px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all var(--transition-slow) cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .animate-on-scroll.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Animation Variations */
+        .fade-in-left {
+            animation: fadeInLeft var(--transition-normal) cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .fade-in-right {
+            animation: fadeInRight var(--transition-normal) cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .scale-in {
+            animation: scaleIn var(--transition-fast) cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* ========== Utility Classes ========== */
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: var(--shadow-large);
+        }
+
+        .gradient-text {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: bold;
+        }
+
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform var(--transition-fast),
+                      opacity var(--transition-normal);
+            transform-origin: center;
+        }
+
+        .cursor-clicked {
+            transform: scale(0.8);
+            background-color: var(--primary-light);
+        }
+
+        /* ========== Responsive Design ========== */
+        @media (max-width: 768px) {
+            :root {
+                --spacing-lg: 16px;
+                --spacing-xl: 24px;
+            }
+
+            .loading-spinner {
+                width: 50px;
+                height: 50px;
+            }
+
+            .loading-text {
+                font-size: 1rem;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        /* ========== Advanced Animations ========== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all var(--transition-slow) cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Slide animations */
+        .slide-up {
+            animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .slide-down {
+            animation: slideDown 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .slide-left {
+            animation: slideLeft 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .slide-right {
+            animation: slideRight 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Fade animations */
+        .fade-in {
+            animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .fade-out {
+            animation: fadeOut 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Scale animations */
+        .scale-up {
+            animation: scaleUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .scale-down {
+            animation: scaleDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Rotate animations */
+        .rotate-in {
+            animation: rotateIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .rotate-out {
+            animation: rotateOut 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Bounce animations */
+        .bounce {
+            animation: bounce 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .bounce-in {
+            animation: bounceIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Flip animations */
+        .flip-x {
+            animation: flipX 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .flip-y {
+            animation: flipY 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Hover effects */
+        .hover-lift {
+            transition: transform var(--transition-fast) cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-5px);
+        }
+
+        .hover-scale {
+            transition: transform var(--transition-fast) cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+
+        .hover-rotate {
+            transition: transform var(--transition-fast) cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .hover-rotate:hover {
+            transform: rotate(5deg);
+        }
+
+        /* Text animations */
+        .text-focus-in {
+            animation: textFocusIn 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .text-blur-out {
+            animation: textBlurOut 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .text-shadow-pop {
+            animation: textShadowPop 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Keyframes */
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideLeft {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideRight {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes scaleUp {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes scaleDown {
+            from {
+                opacity: 0;
+                transform: scale(1.2);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes rotateIn {
+            from {
+                opacity: 0;
+                transform: rotate(-180deg);
+            }
+            to {
+                opacity: 1;
+                transform: rotate(0);
+            }
+        }
+
+        @keyframes rotateOut {
+            from {
+                opacity: 1;
+                transform: rotate(0);
+            }
+            to {
+                opacity: 0;
+                transform: rotate(180deg);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-20px);
+            }
+            60% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                opacity: 0.9;
+                transform: scale(1.1);
+            }
+            80% {
+                opacity: 1;
+                transform: scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes flipX {
+            from {
+                opacity: 0;
+                transform: perspective(400px) rotateX(90deg);
+            }
+            to {
+                opacity: 1;
+                transform: perspective(400px) rotateX(0);
+            }
+        }
+
+        @keyframes flipY {
+            from {
+                opacity: 0;
+                transform: perspective(400px) rotateY(90deg);
+            }
+            to {
+                opacity: 1;
+                transform: perspective(400px) rotateY(0);
+            }
+        }
+
+        @keyframes textFocusIn {
+            0% {
+                filter: blur(12px);
+                opacity: 0;
+            }
+            100% {
+                filter: blur(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes textBlurOut {
+            0% {
+                filter: blur(0);
+                opacity: 1;
+            }
+            100% {
+                filter: blur(12px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes textShadowPop {
+            0% {
+                text-shadow: 0 0 var(--primary);
+                transform: scale(1);
+            }
+            50% {
+                text-shadow: 5px 5px var(--primary);
+                transform: scale(1.1);
+            }
+            100% {
+                text-shadow: 2px 2px var(--primary);
+                transform: scale(1);
+            }
+        }
+
+        /* Stagger animations for lists */
+        .stagger-animate > * {
+            opacity: 0;
+            animation: staggerFadeIn 0.5s ease forwards;
+        }
+
+        .stagger-animate > *:nth-child(1) { animation-delay: 0.1s; }
+        .stagger-animate > *:nth-child(2) { animation-delay: 0.2s; }
+        .stagger-animate > *:nth-child(3) { animation-delay: 0.3s; }
+        .stagger-animate > *:nth-child(4) { animation-delay: 0.4s; }
+        .stagger-animate > *:nth-child(5) { animation-delay: 0.5s; }
+
+        @keyframes staggerFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Particle effect */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--primary);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float-particle 3s infinite ease-in-out;
+        }
+
+        @keyframes float-particle {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+            }
+            50% {
+                transform: translateY(-20px) translateX(10px);
+            }
+        }
+    </style>
+
+    <!-- Flutter Integration -->
+    <script>
+        const serviceWorkerVersion = "246734360";
+    </script>
+    <script src="flutter.js" defer></script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading" class="loading">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Loading amazing things...</div>
+        </div>
+    </div>
+
+    <!-- Flutter Initialization -->
+    <script>
+        window.addEventListener('load', function(ev) {
+            var loading = document.querySelector('#loading');
+            
+            _flutter.loader.loadEntrypoint({
+                serviceWorker: {
+                    serviceWorkerVersion: serviceWorkerVersion,
+                },
+                onEntrypointLoaded: async function(engineInitializer) {
+                    let appRunner = await engineInitializer.initializeEngine();
+                    loading.style.opacity = '0';
+                    setTimeout(function() {
+                        loading.style.display = 'none';
+                    }, 500);
+                    await appRunner.runApp();
+                }
+            });
+        });
+    </script>
+</body>
+</html> 
